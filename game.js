@@ -46,30 +46,6 @@ function getShuffles() {
     return Math.min(15 + (gameState.solved * 2), 40);
 }
 
-// Initialize the game
-function initGame() {
-    const puzzleGrid = document.getElementById('puzzleGrid');
-    puzzleGrid.innerHTML = '';
-    
-    // Create initial grid
-    gameState.grid = [
-        ['red', 'green', 'num'],
-        ['green', 'empty', 'green'],
-        ['num', 'red', 'num']
-    ];
-    
-    gameState.emptyPos = { row: 1, col: 1 };
-    gameState.moves = 0;
-    
-    // Render the grid
-    renderGrid();
-    updateMoveCount();
-    updateLevel();
-    
-    // Add reset button listener
-    document.getElementById('resetButton').addEventListener('click', resetGame);
-}
-
 // Render the grid
 function renderGrid() {
     const puzzleGrid = document.getElementById('puzzleGrid');
@@ -126,12 +102,7 @@ function highlightMovableTiles() {
 
 // Handle tile click
 function handleTileClick(row, col) {
-    console.log('Tile clicked:', row, col, 'Type:', gameState.grid[row][col]);
-    console.log('Empty position:', gameState.emptyPos);
-    console.log('Can move?', canMove(row, col));
-    
     if (!canMove(row, col)) {
-        console.log('Cannot move this tile');
         return;
     }
     
@@ -139,17 +110,12 @@ function handleTileClick(row, col) {
     const emptyRow = gameState.emptyPos.row;
     const emptyCol = gameState.emptyPos.col;
     
-    console.log('Moving tile from', row, col, 'to', emptyRow, emptyCol);
-    
     gameState.grid[emptyRow][emptyCol] = gameState.grid[row][col];
     gameState.grid[row][col] = 'empty';
     gameState.emptyPos = { row, col };
     
     gameState.moves++;
     updateMoveCount();
-    
-    console.log('New grid state:', gameState.grid);
-    console.log('New empty position:', gameState.emptyPos);
     
     renderGrid();
     
@@ -205,8 +171,6 @@ function nextLevel() {
     // Removed - endless mode
 }
 
-// Start a new puzzle
-function startNewPuzzle() {
 // Start a new puzzle
 function startNewPuzzle() {
     gameState.moves = 0;
@@ -317,5 +281,9 @@ function updateSolvedCount() {
 
 // Initialize game when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    // Add reset button listener
+    document.getElementById('resetButton').addEventListener('click', resetGame);
+    
+    // Start first puzzle
     startNewPuzzle();
 });
