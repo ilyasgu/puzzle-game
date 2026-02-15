@@ -4,7 +4,30 @@ let gameState = {
     emptyPos: { row: 1, col: 1 }, // Center position
     moves: 0,
     solved: 0,
-    targetPattern: []
+    targetPattern: [],
+    language: 'en'
+};
+
+// Translations
+const translations = {
+    en: {
+        targetPattern: 'Target Pattern:',
+        moves: 'Moves:',
+        solved: 'Solved:',
+        solvedMessage: '🎉 Solved! 🎉'
+    },
+    tr: {
+        targetPattern: 'Hedef Desen:',
+        moves: 'Hamle:',
+        solved: 'Çözülen:',
+        solvedMessage: '🎉 Çözüldü! 🎉'
+    },
+    nl: {
+        targetPattern: 'Doelpatroon:',
+        moves: 'Zetten:',
+        solved: 'Opgelost:',
+        solvedMessage: '🎉 Opgelost! 🎉'
+    }
 };
 
 // Tile types
@@ -176,12 +199,14 @@ function showSolvedInStatusBar() {
     const statusBar = document.querySelector('.status-bar');
     const originalHTML = statusBar.innerHTML;
     
-    statusBar.innerHTML = '<div class="solved-status">🎉 Solved! 🎉</div>';
+    const message = translations[gameState.language].solvedMessage;
+    statusBar.innerHTML = `<div class="solved-status">${message}</div>`;
     statusBar.classList.add('solved-highlight');
     
     setTimeout(() => {
         statusBar.innerHTML = originalHTML;
         statusBar.classList.remove('solved-highlight');
+        updateLanguage();
     }, 5000);
 }
 
@@ -297,10 +322,45 @@ function updateSolvedCount() {
     document.getElementById('solvedCount').textContent = gameState.solved;
 }
 
+// Update language
+function updateLanguage() {
+    const lang = gameState.language;
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+    
+    // Save preference
+    localStorage.setItem('puzzleGameLanguage', lang);
+}
+
+// Change language
+function changeLanguage(lang) {
+    gameState.language = lang;
+    updateLanguage();
+}
+
 // Initialize game when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    // Load saved language preference
+    const savedLang = localStorage.getItem('puzzleGameLanguage');
+    if (savedLang && translations[savedLang]) {
+        gameState.language = savedLang;
+        document.getElementById('languageSelect').value = savedLang;
+    }
+    
+    // Add language selector listener
+    document.getElementById('languageSelect').addEventListener('change', (e) => {
+        changeLanguage(e.target.value);
+    });
+    
     // Add reset button listener
     document.getElementById('resetButton').addEventListener('click', resetGame);
+    
+    // Apply initial language
+    updateLanguage();
     
     // Start first puzzle
     startNewPuzzle();

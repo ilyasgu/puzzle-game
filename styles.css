@@ -12,6 +12,37 @@ html, body {
     overscroll-behavior: none;
 }
 
+.language-selector {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+}
+
+.language-selector select {
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 3px solid #7ab82e;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #a4d65e 0%, #8bc53f 100%);
+    color: #2c3e50;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.language-selector select:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.language-selector select option {
+    background: #fff;
+    color: #2c3e50;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     background: linear-gradient(135deg, #f5f5dc 0%, #e8e8d0 100%);
