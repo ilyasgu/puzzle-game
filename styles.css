@@ -1,0 +1,390 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #f5f5dc 0%, #e8e8d0 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.container {
+    max-width: 600px;
+    width: 100%;
+}
+
+.game-board {
+    background: linear-gradient(180deg, #a4d65e 0%, #8bc53f 100%);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    border: 8px solid #7ab82e;
+}
+
+.main-puzzle {
+    background: #2c3e50;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+    background: #2c3e50;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.tile {
+    aspect-ratio: 1;
+    background: linear-gradient(145deg, #ffd700 0%, #ffb700 100%);
+    border: 3px solid #333;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: bold;
+    color: #8b4513;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    position: relative;
+    touch-action: manipulation;
+}
+
+.tile::before {
+    content: '';
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #d4a574 0%, #8b6f47 100%);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tile.red::after {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff4444 0%, #cc0000 100%);
+    border: 3px solid #8b0000;
+}
+
+.tile.green::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border-radius: 3px;
+    background: linear-gradient(145deg, #44ff44 0%, #00cc00 100%);
+    border: 3px solid #006600;
+}
+
+.tile.num::after {
+    content: '3';
+    position: absolute;
+    font-size: 36px;
+    color: #8b4513;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.tile.empty {
+    background: #2c3e50;
+    border: 3px solid #445566;
+    cursor: default;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.tile.empty::before {
+    display: none;
+}
+
+.tile:not(.empty):hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+.tile:not(.empty):active,
+.tile:not(.empty).touching {
+    transform: scale(0.98);
+}
+
+.tile.can-move {
+    animation: pulse 1s infinite;
+    cursor: pointer;
+    box-shadow: 0 0 0 3px rgba(139, 197, 63, 0.6), 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.tile.can-move:hover {
+    box-shadow: 0 0 0 4px rgba(139, 197, 63, 0.9), 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.bottom-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    background: #2c3e50;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.target-label {
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.target-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: #ffb700;
+    padding: 8px;
+    border-radius: 8px;
+    border: 3px solid #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.example-puzzles {
+    display: flex;
+    gap: 15px;
+}
+
+.example-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: #ffb700;
+    padding: 4px;
+    border-radius: 5px;
+    border: 2px solid #333;
+}
+
+.mini-tile {
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    position: relative;
+    background: linear-gradient(145deg, #ffd700 0%, #ffb700 100%);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.mini-tile::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #d4a574 0%, #8b6f47 100%);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.mini-tile.red::after {
+    content: '';
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ff4444 0%, #cc0000 100%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #8b0000;
+    z-index: 1;
+}
+
+.mini-tile.green::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background: linear-gradient(145deg, #44ff44 0%, #00cc00 100%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #006600;
+    z-index: 1;
+}
+
+.mini-tile.num {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8b4513;
+    font-weight: bold;
+}
+
+.mini-tile.num::before {
+    display: none;
+}
+
+.mini-tile.gray {
+    background: #999;
+}
+
+.mini-tile.gray::before {
+    display: none;
+}
+
+.mini-tile.empty {
+    background: #2c3e50;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.mini-tile.empty::before {
+    display: none;
+}
+
+.reset-button {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #ffd700 0%, #ffb700 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 4px solid #333;
+    color: #8b4513;
+    touch-action: manipulation;
+}
+
+.reset-button:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.reset-button:active {
+    transform: scale(1.05) rotate(180deg);
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 18px;
+}
+
+.status-bar span {
+    color: #8bc53f;
+    font-size: 24px;
+}
+
+.win-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: linear-gradient(135deg, #8bc53f 0%, #a4d65e 100%);
+    padding: 40px 60px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border: 5px solid #fff;
+    text-align: center;
+    z-index: 1000;
+    transition: transform 0.5s ease;
+}
+
+.win-message.show {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.win-message h2 {
+    color: #fff;
+    font-size: 48px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.win-message p {
+    color: #2c3e50;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.win-message button {
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    padding: 15px 40px;
+    font-size: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.win-message button:hover {
+    background: #34495e;
+    transform: scale(1.1);
+}
+
+@media (max-width: 600px) {
+    .game-board {
+        padding: 20px;
+    }
+
+    .tile {
+        font-size: 32px;
+    }
+
+    .tile.num::after {
+        font-size: 24px;
+    }
+
+    .bottom-section {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .target-label {
+        width: 100%;
+        text-align: center;
+    }
+
+    .reset-button {
+        width: 60px;
+        height: 60px;
+    }
+
+    .mini-tile {
+        width: 30px;
+        height: 30px;
+    }
+}
