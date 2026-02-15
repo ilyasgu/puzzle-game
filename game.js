@@ -10,14 +10,19 @@ let gameState = {
 // Tile types
 const TILE_TYPES = ['red', 'green', 'num'];
 
-// Generate a random target pattern
+// Generate a random target pattern with fixed tile types
 function generateRandomTarget() {
     const pattern = [];
-    const tiles = [];
+    const tiles = [
+        'green', 'green', 'green',
+        'num', 'num', 'num',
+        'red', 'red'
+    ];
     
-    // Create 8 random tiles (excluding the empty space)
-    for (let i = 0; i < 8; i++) {
-        tiles.push(TILE_TYPES[Math.floor(Math.random() * TILE_TYPES.length)]);
+    // Shuffle tiles array
+    for (let i = tiles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
     }
     
     // Randomly place the empty space
@@ -123,9 +128,13 @@ function handleTileClick(row, col) {
     if (checkWin()) {
         gameState.solved++;
         updateSolvedCount();
-        showSolvedBanner();
+        showSolvedInStatusBar();
         setTimeout(() => {
-            startNewPuzzle();
+            // Generate new target but keep current tile positions
+            gameState.targetPattern = generateRandomTarget();
+            renderTargetGrid();
+            gameState.moves = 0;
+            updateMoveCount();
         }, 1500);
     }
 }
@@ -162,26 +171,18 @@ function renderTargetGrid() {
     }
 }
 
-// Show solved banner
-function showSolvedBanner() {
-    const banner = document.createElement('div');
-    banner.className = 'solved-banner';
-    banner.innerHTML = `
-        <div class="solved-content">
-            <div class="solved-emoji">🎉</div>
-            <div class="solved-text">Solved!</div>
-        </div>
-    `;
-    document.body.appendChild(banner);
+// Show solved message in status bar
+function showSolvedInStatusBar() {
+    const statusBar = document.querySelector('.status-bar');
+    const originalHTML = statusBar.innerHTML;
     
-    // Trigger animation
-    setTimeout(() => banner.classList.add('show'), 10);
+    statusBar.innerHTML = '<div class="solved-status">🎉 Solved! 🎉</div>';
+    statusBar.classList.add('solved-highlight');
     
-    // Remove after animation
     setTimeout(() => {
-        banner.classList.remove('show');
-        setTimeout(() => banner.remove(), 300);
-    }, 1200);
+        statusBar.innerHTML = originalHTML;
+        statusBar.classList.remove('solved-highlight');
+    }, 5000);
 }
 
 // Go to next level
@@ -197,21 +198,37 @@ function startNewPuzzle() {
     // Generate random target pattern
     gameState.targetPattern = generateRandomTarget();
     
-    // Set grid to match target
-    gameState.grid = gameState.targetPattern.map(row => [...row]);
+    // Create initial grid with fixed tile types
+    const tiles = [
+        'green', 'green', 'green',
+        'num', 'num', 'num',
+        'red', 'red'
+    ];
     
-    // Find empty position
+    // Shuffle tiles
+    for (let i = tiles.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+    }
+    
+    // Place tiles and empty space
+    const emptyIndex = Math.floor(Math.random() * 9);
+    let tileIndex = 0;
+    gameState.grid = [];
+    
     for (let row = 0; row < 3; row++) {
+        gameState.grid[row] = [];
         for (let col = 0; col < 3; col++) {
-            if (gameState.grid[row][col] === 'empty') {
+            const currentIndex = row * 3 + col;
+            if (currentIndex === emptyIndex) {
+                gameState.grid[row][col] = 'empty';
                 gameState.emptyPos = { row, col };
+            } else {
+                gameState.grid[row][col] = tiles[tileIndex];
+                tileIndex++;
             }
         }
     }
-    
-    // Shuffle the puzzle
-    const shuffles = getShuffles();
-    shufflePuzzle(shuffles);
     
     // Render both grids
     renderGrid();
@@ -258,7 +275,7 @@ function shufflePuzzle(moves) {
     }
 }
 
-// Reset current level with new target
+// Reset just changes the target, not the board
 function resetGame() {
     gameState.moves = 0;
     updateMoveCount();
@@ -266,24 +283,7 @@ function resetGame() {
     // Generate new random target pattern
     gameState.targetPattern = generateRandomTarget();
     
-    // Set grid to match target
-    gameState.grid = gameState.targetPattern.map(row => [...row]);
-    
-    // Find empty position
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 3; col++) {
-            if (gameState.grid[row][col] === 'empty') {
-                gameState.emptyPos = { row, col };
-            }
-        }
-    }
-    
-    // Shuffle the puzzle
-    const shuffles = getShuffles();
-    shufflePuzzle(shuffles);
-    
-    // Render both grids
-    renderGrid();
+    // Only render the target grid, keep board unchanged
     renderTargetGrid();
 }
 
