@@ -123,9 +123,10 @@ function handleTileClick(row, col) {
     if (checkWin()) {
         gameState.solved++;
         updateSolvedCount();
+        showSolvedBanner();
         setTimeout(() => {
             startNewPuzzle();
-        }, 500);
+        }, 1500);
     }
 }
 
@@ -161,9 +162,27 @@ function renderTargetGrid() {
     }
 }
 
-// Show win message
-function showWinMessage() {
-    // Removed - endless mode
+// Show solved banner
+function showSolvedBanner() {
+    const banner = document.createElement('div');
+    banner.className = 'solved-banner';
+    banner.innerHTML = `
+        <div class="solved-content">
+            <div class="solved-emoji">🎉</div>
+            <div class="solved-text">Solved!</div>
+            <div class="solved-moves">${gameState.moves} moves</div>
+        </div>
+    `;
+    document.body.appendChild(banner);
+    
+    // Trigger animation
+    setTimeout(() => banner.classList.add('show'), 10);
+    
+    // Remove after animation
+    setTimeout(() => {
+        banner.classList.remove('show');
+        setTimeout(() => banner.remove(), 300);
+    }, 1200);
 }
 
 // Go to next level
