@@ -163,7 +163,7 @@ function renderTargetGrid() {
             tile.className = `mini-tile ${gameState.targetPattern[row][col]}`;
             
             if (gameState.targetPattern[row][col] === 'num') {
-                tile.textContent = '3';
+                tile.textContent = '7';
             }
             
             targetGrid.appendChild(tile);
