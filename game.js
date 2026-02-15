@@ -170,7 +170,6 @@ function showSolvedBanner() {
         <div class="solved-content">
             <div class="solved-emoji">🎉</div>
             <div class="solved-text">Solved!</div>
-            <div class="solved-moves">${gameState.moves} moves</div>
         </div>
     `;
     document.body.appendChild(banner);
