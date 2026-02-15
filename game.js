@@ -3,7 +3,7 @@ let gameState = {
     grid: [],
     emptyPos: { row: 1, col: 1 }, // Center position
     moves: 0,
-    level: 1,
+    solved: 0,
     targetPattern: []
 };
 
@@ -41,9 +41,9 @@ function generateRandomTarget() {
     return pattern;
 }
 
-// Calculate difficulty based on level
-function getShufflesForLevel(level) {
-    return Math.min(10 + (level * 5), 50);
+// Calculate difficulty based on puzzles solved
+function getShuffles() {
+    return Math.min(15 + (gameState.solved * 2), 40);
 }
 
 // Initialize the game
@@ -155,7 +155,11 @@ function handleTileClick(row, col) {
     
     // Check if puzzle is solved
     if (checkWin()) {
-        setTimeout(() => showWinMessage(), 300);
+        gameState.solved++;
+        updateSolvedCount();
+        setTimeout(() => {
+            startNewPuzzle();
+        }, 500);
     }
 }
 
@@ -193,34 +197,20 @@ function renderTargetGrid() {
 
 // Show win message
 function showWinMessage() {
-    const message = document.createElement('div');
-    message.className = 'win-message';
-    message.innerHTML = `
-        <h2>🎉 Level Complete! 🎉</h2>
-        <p>Moves: ${gameState.moves}</p>
-        <button onclick="nextLevel()">Next Level</button>
-    `;
-    document.body.appendChild(message);
-    
-    setTimeout(() => message.classList.add('show'), 100);
+    // Removed - endless mode
 }
 
 // Go to next level
 function nextLevel() {
-    const message = document.querySelector('.win-message');
-    if (message) {
-        message.remove();
-    }
-    
-    gameState.level++;
-    startLevel(gameState.level);
+    // Removed - endless mode
 }
 
-// Start a specific level
-function startLevel(level) {
+// Start a new puzzle
+function startNewPuzzle() {
+// Start a new puzzle
+function startNewPuzzle() {
     gameState.moves = 0;
     updateMoveCount();
-    updateLevel();
     
     // Generate random target pattern
     gameState.targetPattern = generateRandomTarget();
@@ -238,7 +228,7 @@ function startLevel(level) {
     }
     
     // Shuffle the puzzle
-    const shuffles = getShufflesForLevel(level);
+    const shuffles = getShuffles();
     shufflePuzzle(shuffles);
     
     // Render both grids
@@ -307,7 +297,7 @@ function resetGame() {
     }
     
     // Shuffle the puzzle
-    const shuffles = getShufflesForLevel(gameState.level);
+    const shuffles = getShuffles();
     shufflePuzzle(shuffles);
     
     // Render both grids
@@ -315,28 +305,17 @@ function resetGame() {
     renderTargetGrid();
 }
 
-// Restart from level 1
-function restartGame() {
-    const message = document.querySelector('.win-message');
-    if (message) {
-        message.remove();
-    }
-    
-    gameState.level = 1;
-    startLevel(1);
-}
-
 // Update move counter
 function updateMoveCount() {
     document.getElementById('moveCount').textContent = gameState.moves;
 }
 
-// Update level display
-function updateLevel() {
-    document.getElementById('levelNum').textContent = gameState.level;
+// Update solved counter
+function updateSolvedCount() {
+    document.getElementById('solvedCount').textContent = gameState.solved;
 }
 
 // Initialize game when page loads
 window.addEventListener('DOMContentLoaded', () => {
-    startLevel(1);
+    startNewPuzzle();
 });
