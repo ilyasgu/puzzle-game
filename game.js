@@ -2,6 +2,7 @@
 let gameState = {
     grid: [],
     emptyPos: { row: 0, col: 0 },
+    moves: 0,
     solved: 0,
     targetPattern: [],
     level: 1,
@@ -15,19 +16,19 @@ let gameState = {
 const translations = {
     en: {
         targetPattern: 'Target Pattern:',
-        solved: 'Solved:',
+        moves: 'Moves:',
         solvedMessage: '🎉 Solved! 🎉',
         darkMode: 'Dark Mode'
     },
     tr: {
         targetPattern: 'Hedef Desen:',
-        solved: 'Çözülen:',
+        moves: 'Hamle:',
         solvedMessage: '🎉 Çözüldü! 🎉',
         darkMode: 'Koyu Mod'
     },
     nl: {
         targetPattern: 'Doelpatroon:',
-        solved: 'Opgelost:',
+        moves: 'Zetten:',
         solvedMessage: '🎉 Opgelost! 🎉',
         darkMode: 'Donkere Modus'
     }
@@ -176,17 +177,20 @@ function handleTileClick(row, col) {
     gameState.grid[emptyRow][emptyCol] = gameState.grid[row][col];
     gameState.grid[row][col] = 'empty';
     gameState.emptyPos = { row, col };
+    gameState.moves++;
+    updateMovesCount();
     
     renderGrid();
     
     // Check if puzzle is solved
     if (checkWin()) {
         gameState.solved++;
-        updateSolvedCount();
         showSolvedInStatusBar();
         setTimeout(() => {
             // Generate new target but keep current tile positions
             gameState.targetPattern = generateRandomTarget();
+            gameState.moves = 0;
+            updateMovesCount();
             renderTargetGrid();
         }, 1500);
     }
@@ -283,6 +287,8 @@ function startNewPuzzle() {
     }
     
     // Render both grids
+    gameState.moves = 0;
+    updateMovesCount();
     renderGrid();
     renderTargetGrid();
 }
@@ -333,14 +339,16 @@ function shufflePuzzle(moves) {
 function resetGame() {
     // Generate new random target pattern
     gameState.targetPattern = generateRandomTarget();
+    gameState.moves = 0;
+    updateMovesCount();
     
     // Only render the target grid, keep board unchanged
     renderTargetGrid();
 }
 
-// Update solved counter
-function updateSolvedCount() {
-    document.getElementById('solvedCount').textContent = gameState.solved;
+// Update moves counter
+function updateMovesCount() {
+    document.getElementById('movesCount').textContent = gameState.moves;
 }
 
 // Update theme
@@ -379,7 +387,8 @@ function changeLanguage(lang) {
 function changeLevel(level) {
     setLevel(level);
     gameState.solved = 0;
-    updateSolvedCount();
+    gameState.moves = 0;
+    updateMovesCount();
     startNewPuzzle();
 }
 
