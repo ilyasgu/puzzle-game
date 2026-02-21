@@ -9,12 +9,25 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="language-selector">
-        <select id="languageSelect">
-            <option value="en">🇬🇧 English</option>
-            <option value="tr">🇹🇷 Türkçe</option>
-            <option value="nl">🇳🇱 Nederlands</option>
-        </select>
+    <div class="options-bar">
+        <div class="level-selector">
+            <select id="levelSelect">
+                <option value="1">Level 1 (3x3)</option>
+                <option value="2">Level 2 (4x4)</option>
+            </select>
+        </div>
+        <div class="language-selector">
+            <select id="languageSelect">
+                <option value="en">🇬🇧 English</option>
+                <option value="tr">🇹🇷 Türkçe</option>
+                <option value="nl">🇳🇱 Nederlands</option>
+            </select>
+        </div>
+        <label class="theme-toggle" for="themeToggle">
+            <input type="checkbox" id="themeToggle" />
+            <span class="theme-slider" aria-hidden="true"></span>
+            <span class="theme-label" data-i18n="darkMode">Dark Mode</span>
+        </label>
     </div>
     
     <div class="container">
@@ -40,7 +53,6 @@
             </div>
 
             <div class="status-bar">
-                <div class="moves"><span data-i18n="moves">Moves:</span> <span id="moveCount">0</span></div>
                 <div class="solved"><span data-i18n="solved">Solved:</span> <span id="solvedCount">0</span></div>
             </div>
         </div>

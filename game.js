@@ -2,31 +2,31 @@
 let gameState = {
     grid: [],
     emptyPos: { row: 1, col: 1 }, // Center position
-    moves: 0,
     solved: 0,
     targetPattern: [],
-    language: 'en'
+    language: 'en',
+    theme: 'light'
 };
 
 // Translations
 const translations = {
     en: {
         targetPattern: 'Target Pattern:',
-        moves: 'Moves:',
         solved: 'Solved:',
-        solvedMessage: '🎉 Solved! 🎉'
+        solvedMessage: '🎉 Solved! 🎉',
+        darkMode: 'Dark Mode'
     },
     tr: {
         targetPattern: 'Hedef Desen:',
-        moves: 'Hamle:',
         solved: 'Çözülen:',
-        solvedMessage: '🎉 Çözüldü! 🎉'
+        solvedMessage: '🎉 Çözüldü! 🎉',
+        darkMode: 'Koyu Mod'
     },
     nl: {
         targetPattern: 'Doelpatroon:',
-        moves: 'Zetten:',
         solved: 'Opgelost:',
-        solvedMessage: '🎉 Opgelost! 🎉'
+        solvedMessage: '🎉 Opgelost! 🎉',
+        darkMode: 'Donkere Modus'
     }
 };
 
@@ -142,9 +142,6 @@ function handleTileClick(row, col) {
     gameState.grid[row][col] = 'empty';
     gameState.emptyPos = { row, col };
     
-    gameState.moves++;
-    updateMoveCount();
-    
     renderGrid();
     
     // Check if puzzle is solved
@@ -156,8 +153,6 @@ function handleTileClick(row, col) {
             // Generate new target but keep current tile positions
             gameState.targetPattern = generateRandomTarget();
             renderTargetGrid();
-            gameState.moves = 0;
-            updateMoveCount();
         }, 1500);
     }
 }
@@ -217,9 +212,6 @@ function nextLevel() {
 
 // Start a new puzzle
 function startNewPuzzle() {
-    gameState.moves = 0;
-    updateMoveCount();
-    
     // Generate random target pattern
     gameState.targetPattern = generateRandomTarget();
     
@@ -302,9 +294,6 @@ function shufflePuzzle(moves) {
 
 // Reset just changes the target, not the board
 function resetGame() {
-    gameState.moves = 0;
-    updateMoveCount();
-    
     // Generate new random target pattern
     gameState.targetPattern = generateRandomTarget();
     
@@ -312,14 +301,22 @@ function resetGame() {
     renderTargetGrid();
 }
 
-// Update move counter
-function updateMoveCount() {
-    document.getElementById('moveCount').textContent = gameState.moves;
-}
-
 // Update solved counter
 function updateSolvedCount() {
     document.getElementById('solvedCount').textContent = gameState.solved;
+}
+
+// Update theme
+function updateTheme() {
+    const isDark = gameState.theme === 'dark';
+    document.body.classList.toggle('dark-mode', isDark);
+    localStorage.setItem('puzzleGameTheme', gameState.theme);
+}
+
+// Change theme
+function changeTheme(theme) {
+    gameState.theme = theme;
+    updateTheme();
 }
 
 // Update language
@@ -344,6 +341,12 @@ function changeLanguage(lang) {
 
 // Initialize game when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    // Load saved theme preference
+    const savedTheme = localStorage.getItem('puzzleGameTheme');
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+        gameState.theme = savedTheme;
+    }
+    
     // Load saved language preference
     const savedLang = localStorage.getItem('puzzleGameLanguage');
     if (savedLang && translations[savedLang]) {
@@ -355,12 +358,20 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('languageSelect').addEventListener('change', (e) => {
         changeLanguage(e.target.value);
     });
+
+    // Add theme toggle listener
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.checked = gameState.theme === 'dark';
+    themeToggle.addEventListener('change', (e) => {
+        changeTheme(e.target.checked ? 'dark' : 'light');
+    });
     
     // Add reset button listener
     document.getElementById('resetButton').addEventListener('click', resetGame);
     
     // Apply initial language
     updateLanguage();
+    updateTheme();
     
     // Start first puzzle
     startNewPuzzle();
