@@ -58,10 +58,14 @@ function getTilesForGrid(rows, cols) {
 function setLevel(level) {
     if (level === 2) {
         gameState.level = 2;
-        gameState.gridRows = 3;
-        gameState.gridCols = 4;
+        gameState.gridRows = 4;
+        gameState.gridCols = 3;
     } else if (level === 3) {
         gameState.level = 3;
+        gameState.gridRows = 3;
+        gameState.gridCols = 4;
+    } else if (level === 4) {
+        gameState.level = 4;
         gameState.gridRows = 4;
         gameState.gridCols = 4;
     } else {
