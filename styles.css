@@ -41,8 +41,17 @@ html, body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+body.dark-mode .options-menu-button {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #1f3b63 0%, #162a45 100%);
+    color: #dbeafe;
+}
+
 .options-menu {
-    display: none;
+    display: flex;
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 58px);
+    right: calc(env(safe-area-inset-right) + 10px);
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
@@ -55,10 +64,16 @@ html, body {
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transform: translateX(calc(100% + 24px));
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s ease, opacity 0.2s ease;
 }
 
 .options-menu.open {
-    display: flex;
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
 }
 
 body.dark-mode .options-menu {
@@ -98,6 +113,19 @@ body.dark-mode .options-menu {
 .level-selector select option {
     background: #fff;
     color: #2c3e50;
+}
+
+body.dark-mode .language-selector select,
+body.dark-mode .level-selector select {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #1f3b63 0%, #162a45 100%);
+    color: #dbeafe;
+}
+
+body.dark-mode .language-selector select option,
+body.dark-mode .level-selector select option {
+    background: #0f1722;
+    color: #dbeafe;
 }
 
 .theme-toggle {
@@ -152,6 +180,24 @@ body.dark-mode .options-menu {
 
 .theme-label {
     white-space: nowrap;
+}
+
+body.dark-mode .theme-toggle {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #1f3b63 0%, #162a45 100%);
+    color: #dbeafe;
+}
+
+body.dark-mode .theme-slider {
+    background: #0f1722;
+}
+
+body.dark-mode .theme-slider::after {
+    background: #93c5fd;
+}
+
+body.dark-mode .theme-toggle input:checked + .theme-slider::after {
+    background: #dbeafe;
 }
 
 body {
@@ -304,10 +350,10 @@ body.dark-mode .puzzle-grid {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
     background: #2c3e50;
     border-radius: 15px;
-    padding: 15px;
+    padding: 10px;
     margin-bottom: 12px;
 }
 
@@ -317,16 +363,16 @@ body.dark-mode .bottom-section {
 
 .target-label {
     color: #fff;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
 }
 
 .target-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 3px;
+    gap: 2px;
     background: #ffb700;
-    padding: 8px;
+    padding: 6px;
     border-radius: 8px;
     border: 3px solid #333;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -353,8 +399,8 @@ body.dark-mode .target-grid {
 }
 
 .mini-tile {
-    width: 35px;
-    height: 35px;
+    width: 28px;
+    height: 28px;
     border-radius: 5px;
     position: relative;
     background: linear-gradient(145deg, #ffd700 0%, #ffb700 100%);
@@ -364,8 +410,8 @@ body.dark-mode .target-grid {
 .mini-tile::before {
     content: '';
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     background: radial-gradient(circle, #d4a574 0%, #8b6f47 100%);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -377,8 +423,8 @@ body.dark-mode .target-grid {
 .mini-tile.red::after {
     content: '';
     position: absolute;
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: radial-gradient(circle, #b366ff 0%, #8800ff 100%);
     top: 50%;
@@ -391,8 +437,8 @@ body.dark-mode .target-grid {
 .mini-tile.green::after {
     content: '';
     position: absolute;
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 2px;
     background: linear-gradient(145deg, #4488ff 0%, #0055ff 100%);
     top: 50%;
@@ -403,7 +449,7 @@ body.dark-mode .target-grid {
 }
 
 .mini-tile.num {
-    font-size: 20px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
