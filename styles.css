@@ -6,17 +6,15 @@
 
 html, body {
     width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: fixed;
+    min-height: 100%;
     overscroll-behavior: none;
 }
 
 
 .options-bar {
     position: fixed;
-    top: 10px;
-    right: 10px;
+    top: calc(env(safe-area-inset-top) + 10px);
+    right: calc(env(safe-area-inset-right) + 10px);
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -49,6 +47,10 @@ html, body {
     align-items: stretch;
     gap: 8px;
     padding: 10px;
+    width: min(260px, calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right) - 20px));
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 80px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     border: 3px solid #7ab82e;
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.95);
@@ -72,6 +74,7 @@ body.dark-mode .options-menu {
 
 .language-selector select,
 .level-selector select {
+    width: 100%;
     padding: 8px 12px;
     font-size: 14px;
     font-weight: bold;
@@ -156,18 +159,16 @@ body {
     background: linear-gradient(135deg, #f5f5dc 0%, #e8e8d0 100%);
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
-    height: 100%;
-    padding: 10px;
+    min-height: 100dvh;
+    padding: calc(env(safe-area-inset-top) + 72px) calc(env(safe-area-inset-right) + 10px) calc(env(safe-area-inset-bottom) + 10px) calc(env(safe-area-inset-left) + 10px);
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     user-select: none;
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 body.dark-mode {
@@ -178,9 +179,9 @@ body.dark-mode {
 .container {
     max-width: 600px;
     width: 100%;
-    max-height: 100vh;
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 82px);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 }
 
@@ -501,12 +502,22 @@ body.dark-mode .status-bar span {
 
 
 @media (max-width: 600px) {
+    body {
+        padding-top: calc(env(safe-area-inset-top) + 64px);
+    }
+
+    .options-menu {
+        width: min(240px, calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right) - 20px));
+    }
+
     .game-board {
-        padding: 20px;
+        padding: 14px;
+        border-width: 6px;
     }
 
     .tile {
         font-size: 32px;
+        border-width: 2px;
     }
 
     .tile.num::after {
@@ -529,7 +540,7 @@ body.dark-mode .status-bar span {
     }
 
     .mini-tile {
-        width: 30px;
-        height: 30px;
+        width: 26px;
+        height: 26px;
     }
 }
