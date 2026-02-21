@@ -1,9 +1,12 @@
 // Game state
 let gameState = {
     grid: [],
-    emptyPos: { row: 1, col: 1 }, // Center position
+    emptyPos: { row: 0, col: 0 },
     solved: 0,
     targetPattern: [],
+    level: 1,
+    gridRows: 3,
+    gridCols: 3,
     language: 'en',
     theme: 'light'
 };
@@ -31,32 +34,61 @@ const translations = {
 };
 
 // Tile types
-const TILE_TYPES = ['red', 'green', 'num'];
+const TILE_TYPES = ['green', 'num', 'red'];
+
+function shuffleArray(items) {
+    for (let i = items.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [items[i], items[j]] = [items[j], items[i]];
+    }
+}
+
+function getTilesForGrid(rows, cols) {
+    const nonEmptyTileCount = (rows * cols) - 1;
+    const tiles = [];
+
+    for (let i = 0; i < nonEmptyTileCount; i++) {
+        tiles.push(TILE_TYPES[i % TILE_TYPES.length]);
+    }
+
+    return tiles;
+}
+
+function setLevel(level) {
+    if (level === 2) {
+        gameState.level = 2;
+        gameState.gridRows = 3;
+        gameState.gridCols = 4;
+    } else if (level === 3) {
+        gameState.level = 3;
+        gameState.gridRows = 4;
+        gameState.gridCols = 4;
+    } else {
+        gameState.level = 1;
+        gameState.gridRows = 3;
+        gameState.gridCols = 3;
+    }
+
+    localStorage.setItem('puzzleGameLevel', String(gameState.level));
+}
 
 // Generate a random target pattern with fixed tile types
 function generateRandomTarget() {
+    const gridRows = gameState.gridRows;
+    const gridCols = gameState.gridCols;
     const pattern = [];
-    const tiles = [
-        'green', 'green', 'green',
-        'num', 'num', 'num',
-        'red', 'red'
-    ];
-    
-    // Shuffle tiles array
-    for (let i = tiles.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-    }
+    const tiles = getTilesForGrid(gridRows, gridCols);
+    shuffleArray(tiles);
     
     // Randomly place the empty space
-    const emptyIndex = Math.floor(Math.random() * 9);
+    const emptyIndex = Math.floor(Math.random() * (gridRows * gridCols));
     
-    // Build the 3x3 pattern
+    // Build the target pattern
     let tileIndex = 0;
-    for (let row = 0; row < 3; row++) {
+    for (let row = 0; row < gridRows; row++) {
         pattern[row] = [];
-        for (let col = 0; col < 3; col++) {
-            const currentIndex = row * 3 + col;
+        for (let col = 0; col < gridCols; col++) {
+            const currentIndex = row * gridCols + col;
             if (currentIndex === emptyIndex) {
                 pattern[row][col] = 'empty';
             } else {
@@ -77,10 +109,13 @@ function getShuffles() {
 // Render the grid
 function renderGrid() {
     const puzzleGrid = document.getElementById('puzzleGrid');
+    const gridRows = gameState.gridRows;
+    const gridCols = gameState.gridCols;
     puzzleGrid.innerHTML = '';
+    puzzleGrid.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
     
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 3; col++) {
+    for (let row = 0; row < gridRows; row++) {
+        for (let col = 0; col < gridCols; col++) {
             const tile = document.createElement('div');
             tile.className = `tile ${gameState.grid[row][col]}`;
             tile.dataset.row = row;
@@ -159,8 +194,11 @@ function handleTileClick(row, col) {
 
 // Check if puzzle matches target pattern
 function checkWin() {
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 3; col++) {
+    const gridRows = gameState.gridRows;
+    const gridCols = gameState.gridCols;
+
+    for (let row = 0; row < gridRows; row++) {
+        for (let col = 0; col < gridCols; col++) {
             if (gameState.grid[row][col] !== gameState.targetPattern[row][col]) {
                 return false;
             }
@@ -173,10 +211,13 @@ function checkWin() {
 // Render the target grid
 function renderTargetGrid() {
     const targetGrid = document.getElementById('targetGrid');
+    const gridRows = gameState.gridRows;
+    const gridCols = gameState.gridCols;
     targetGrid.innerHTML = '';
+    targetGrid.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
     
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 3; col++) {
+    for (let row = 0; row < gridRows; row++) {
+        for (let col = 0; col < gridCols; col++) {
             const tile = document.createElement('div');
             tile.className = `mini-tile ${gameState.targetPattern[row][col]}`;
             
@@ -212,31 +253,25 @@ function nextLevel() {
 
 // Start a new puzzle
 function startNewPuzzle() {
+    const gridRows = gameState.gridRows;
+    const gridCols = gameState.gridCols;
+
     // Generate random target pattern
     gameState.targetPattern = generateRandomTarget();
     
     // Create initial grid with fixed tile types
-    const tiles = [
-        'green', 'green', 'green',
-        'num', 'num', 'num',
-        'red', 'red'
-    ];
-    
-    // Shuffle tiles
-    for (let i = tiles.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
-    }
+    const tiles = getTilesForGrid(gridRows, gridCols);
+    shuffleArray(tiles);
     
     // Place tiles and empty space
-    const emptyIndex = Math.floor(Math.random() * 9);
+    const emptyIndex = Math.floor(Math.random() * (gridRows * gridCols));
     let tileIndex = 0;
     gameState.grid = [];
     
-    for (let row = 0; row < 3; row++) {
+    for (let row = 0; row < gridRows; row++) {
         gameState.grid[row] = [];
-        for (let col = 0; col < 3; col++) {
-            const currentIndex = row * 3 + col;
+        for (let col = 0; col < gridCols; col++) {
+            const currentIndex = row * gridCols + col;
             if (currentIndex === emptyIndex) {
                 gameState.grid[row][col] = 'empty';
                 gameState.emptyPos = { row, col };
@@ -254,6 +289,8 @@ function startNewPuzzle() {
 
 // Shuffle puzzle by making random valid moves
 function shufflePuzzle(moves) {
+    const gridRows = gameState.gridRows;
+    const gridCols = gameState.gridCols;
     const directions = [
         { dr: -1, dc: 0 }, // up
         { dr: 1, dc: 0 },  // down
@@ -270,7 +307,7 @@ function shufflePuzzle(moves) {
             const newRow = gameState.emptyPos.row + dir.dr;
             const newCol = gameState.emptyPos.col + dir.dc;
             
-            if (newRow >= 0 && newRow < 3 && newCol >= 0 && newCol < 3) {
+            if (newRow >= 0 && newRow < gridRows && newCol >= 0 && newCol < gridCols) {
                 // Avoid immediately undoing the last move
                 if (lastMove === null || index !== (lastMove + 2) % 4) {
                     validMoves.push({ row: newRow, col: newCol, moveIndex: index });
@@ -339,8 +376,37 @@ function changeLanguage(lang) {
     updateLanguage();
 }
 
+function changeLevel(level) {
+    setLevel(level);
+    gameState.solved = 0;
+    updateSolvedCount();
+    startNewPuzzle();
+}
+
 // Initialize game when page loads
 window.addEventListener('DOMContentLoaded', () => {
+    const optionsMenuButton = document.getElementById('optionsMenuButton');
+    const optionsMenu = document.getElementById('optionsMenu');
+
+    function closeOptionsMenu() {
+        optionsMenu.classList.remove('open');
+        optionsMenuButton.setAttribute('aria-expanded', 'false');
+    }
+
+    optionsMenuButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = optionsMenu.classList.toggle('open');
+        optionsMenuButton.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    optionsMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    document.addEventListener('click', () => {
+        closeOptionsMenu();
+    });
+
     // Load saved theme preference
     const savedTheme = localStorage.getItem('puzzleGameTheme');
     if (savedTheme === 'dark' || savedTheme === 'light') {
@@ -353,10 +419,22 @@ window.addEventListener('DOMContentLoaded', () => {
         gameState.language = savedLang;
         document.getElementById('languageSelect').value = savedLang;
     }
+
+    // Load saved level preference
+    const savedLevel = Number(localStorage.getItem('puzzleGameLevel'));
+    setLevel(savedLevel);
+    document.getElementById('levelSelect').value = String(gameState.level);
+
+    // Add level selector listener
+    document.getElementById('levelSelect').addEventListener('change', (e) => {
+        changeLevel(Number(e.target.value));
+        closeOptionsMenu();
+    });
     
     // Add language selector listener
     document.getElementById('languageSelect').addEventListener('change', (e) => {
         changeLanguage(e.target.value);
+        closeOptionsMenu();
     });
 
     // Add theme toggle listener
@@ -364,6 +442,7 @@ window.addEventListener('DOMContentLoaded', () => {
     themeToggle.checked = gameState.theme === 'dark';
     themeToggle.addEventListener('change', (e) => {
         changeTheme(e.target.checked ? 'dark' : 'light');
+        closeOptionsMenu();
     });
     
     // Add reset button listener

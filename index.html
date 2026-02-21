@@ -10,24 +10,30 @@
 </head>
 <body>
     <div class="options-bar">
-        <div class="level-selector">
-            <select id="levelSelect">
-                <option value="1">Level 1 (3x3)</option>
-                <option value="2">Level 2 (4x4)</option>
-            </select>
+        <button class="options-menu-button" id="optionsMenuButton" type="button" aria-expanded="false" aria-controls="optionsMenu">
+            ☰ Options
+        </button>
+        <div class="options-menu" id="optionsMenu">
+            <div class="level-selector">
+                <select id="levelSelect">
+                    <option value="1">Level 1 (3x3)</option>
+                    <option value="2">Level 2 (3x4)</option>
+                    <option value="3">Level 3 (4x4)</option>
+                </select>
+            </div>
+            <div class="language-selector">
+                <select id="languageSelect">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="tr">🇹🇷 Türkçe</option>
+                    <option value="nl">🇳🇱 Nederlands</option>
+                </select>
+            </div>
+            <label class="theme-toggle" for="themeToggle">
+                <input type="checkbox" id="themeToggle" />
+                <span class="theme-slider" aria-hidden="true"></span>
+                <span class="theme-label" data-i18n="darkMode">Dark Mode</span>
+            </label>
         </div>
-        <div class="language-selector">
-            <select id="languageSelect">
-                <option value="en">🇬🇧 English</option>
-                <option value="tr">🇹🇷 Türkçe</option>
-                <option value="nl">🇳🇱 Nederlands</option>
-            </select>
-        </div>
-        <label class="theme-toggle" for="themeToggle">
-            <input type="checkbox" id="themeToggle" />
-            <span class="theme-slider" aria-hidden="true"></span>
-            <span class="theme-label" data-i18n="darkMode">Dark Mode</span>
-        </label>
     </div>
     
     <div class="container">
